@@ -5,7 +5,7 @@ PCL‚Æ‘ŠŒÝ•ÏŠ·‚µ‚½‚è‚µ‚½‚¢
 */
 
 #pragma once
-//#include "../../Kinect2Wrapper/Kinect2Wrapper/Kinect2.h"
+#include "../../Kinect2Wrapper/Kinect2Wrapper/Kinect2.h"
 
 #include <fstream>
 #include <iostream>
