@@ -11,7 +11,7 @@
 #include <pcl/visualization/cloud_viewer.h>
 
 #include <Kinect.h>
-#include "../../Kinect2Wrapper/Kinect2Wrapper/Kinect2.h"
+#include "../../../Kinect2Wrapper/Kinect2Wrapper/Kinect2.h"
 
 class PCLUtility {
 
