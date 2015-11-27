@@ -41,9 +41,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\opencv\build\include;%(AdditionalIncludeDirectories);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\opencv\build\include;%(AdditionalIncludeDirectories);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -52,6 +54,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\PCL 1.7.2\include\pcl-1.7;C:\Program Files %28x86%29\PCL 1.7.2\3rdParty\Boost\include\boost-1_57;C:\Program Files %28x86%29\PCL 1.7.2\3rdParty\Eigen\eigen3;C:\Program Files %28x86%29\PCL 1.7.2\3rdParty\FLANN\include;C:\Program Files %28x86%29\PCL 1.7.2\3rdParty\Qhull\include;C:\Program Files %28x86%29\PCL 1.7.2\3rdParty\VTK\include\vtk-6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -67,6 +70,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\PCL 1.7.2\include\pcl-1.7;C:\Program Files %28x86%29\PCL 1.7.2\3rdParty\Boost\include\boost-1_57;C:\Program Files %28x86%29\PCL 1.7.2\3rdParty\Eigen\eigen3;C:\Program Files %28x86%29\PCL 1.7.2\3rdParty\FLANN\include;C:\Program Files %28x86%29\PCL 1.7.2\3rdParty\Qhull\include;C:\Program Files %28x86%29\PCL 1.7.2\3rdParty\VTK\include\vtk-6.2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -79,10 +83,20 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="KinectPointDef.h" />
+    <ClInclude Include="KinectPointIO.h" />
+    <ClInclude Include="KinectPointRecorder.h" />
+    <ClInclude Include="PCLDownsampling.h" />
+    <ClInclude Include="PCLUtility.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="KinectPointIO.cpp" />
+    <ClCompile Include="KinectPointLoader.cpp" />
+    <ClCompile Include="KinectPointRecorder.cpp" />
+    <ClCompile Include="KinectPointWriter.cpp" />
+    <ClCompile Include="PCLUtility.cpp" />
     <ClCompile Include="PointCloudStudy.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

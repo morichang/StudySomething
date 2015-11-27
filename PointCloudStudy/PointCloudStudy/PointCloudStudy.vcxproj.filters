@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ソース ファイル\KinectPoitnIO">
+      <UniqueIdentifier>{40905c8b-d2b0-4455-9feb-52864d21d77d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\PCL">
+      <UniqueIdentifier>{00e38a42-82d7-4142-904c-bd8847d9202f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -24,6 +30,21 @@
     <ClInclude Include="targetver.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="KinectPointDef.h">
+      <Filter>ソース ファイル\KinectPoitnIO</Filter>
+    </ClInclude>
+    <ClInclude Include="KinectPointIO.h">
+      <Filter>ソース ファイル\KinectPoitnIO</Filter>
+    </ClInclude>
+    <ClInclude Include="KinectPointRecorder.h">
+      <Filter>ソース ファイル\KinectPoitnIO</Filter>
+    </ClInclude>
+    <ClInclude Include="PCLDownsampling.h">
+      <Filter>ソース ファイル\PCL</Filter>
+    </ClInclude>
+    <ClInclude Include="PCLUtility.h">
+      <Filter>ソース ファイル\PCL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -31,6 +52,21 @@
     </ClCompile>
     <ClCompile Include="PointCloudStudy.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="KinectPointIO.cpp">
+      <Filter>ソース ファイル\KinectPoitnIO</Filter>
+    </ClCompile>
+    <ClCompile Include="KinectPointLoader.cpp">
+      <Filter>ソース ファイル\KinectPoitnIO</Filter>
+    </ClCompile>
+    <ClCompile Include="KinectPointRecorder.cpp">
+      <Filter>ソース ファイル\KinectPoitnIO</Filter>
+    </ClCompile>
+    <ClCompile Include="KinectPointWriter.cpp">
+      <Filter>ソース ファイル\KinectPoitnIO</Filter>
+    </ClCompile>
+    <ClCompile Include="PCLUtility.cpp">
+      <Filter>ソース ファイル\PCL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
