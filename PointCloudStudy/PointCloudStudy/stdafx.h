@@ -56,15 +56,6 @@ PCL
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/filters/extract_indices.h>
 //#include <pcl/filters/voxel_grid.h>
-//#include <pcl/filters/extract_indices.h>
-
-//#include <pcl/ModelCoefficients.h>
-//#include <pcl/point_types.h>
-//#include <pcl/sample_consensus/method_types.h>
-//#include <pcl/sample_consensus/model_types.h>
-//#include <pcl/segmentation/sac_segmentation.h>
-//#include <pcl/filters/voxel_grid.h>
-//#include <pcl/filters/extract_indices.h>
 
 #ifdef _DEBUG
 #pragma comment(lib, "pcl_common_debug.lib")
@@ -97,11 +88,11 @@ PCL
 #pragma comment(lib, "pcl_surface_release.lib")
 #pragma comment(lib, "pcl_tracking_release.lib")
 #pragma comment(lib, "pcl_visualization_release.lib")
-//
+//FLANN
 #pragma comment(lib, "flann.lib")
 #pragma comment(lib, "flann_cpp_s.lib")
 #pragma comment(lib, "flann_s.lib")
-//
+//VTK
 #pragma comment(lib, "vtkChartsCore-6.2.lib")
 #pragma comment(lib, "vtkCommonColor-6.2.lib")
 #pragma comment(lib, "vtkCommonCore-6.2.lib")

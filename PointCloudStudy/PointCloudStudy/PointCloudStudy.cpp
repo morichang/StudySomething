@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "FileConvert.h"
+#include <pcl/octree/octree_impl.h>
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -17,7 +18,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//pcl::io::loadPCDFile(name + ".pcd", *cloud);
 	pcl::io::loadPLYFile(name + ".ply", *cloud);
 
-	/*pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZRGB>);
+	pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZRGB>);
 
 	pcl::PointCloud<pcl::PointNormal> mls_points;
 
@@ -32,7 +33,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	mls.process(mls_points);
 
-	pcl::io::savePLYFileBinary(name + ".ply", mls_points);*/
+	pcl::io::savePLYFileBinary(name + ".ply", mls_points);
 
 	pcl::visualization::CloudViewer viewer("Cloud Viewer");
 
