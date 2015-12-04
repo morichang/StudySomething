@@ -11,29 +11,49 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 	FileConvert conv;
-	std::string name = "table_scene_mug_stereo_textured";
+	std::string name = "20151203T222733.871536";
 
-	conv.convPCD2PLY(name, cloud);
+	//conv.convPCD2PLY(name, cloud);
 	
 	//pcl::io::loadPCDFile(name + ".pcd", *cloud);
 	pcl::io::loadPLYFile(name + ".ply", *cloud);
 
+
+	//ñ@ê¸ÇÃêÑíË
+	pcl::NormalEstimation<pcl::PointXYZRGB, pcl::Normal> n;
+	pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);
 	pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZRGB>);
+	tree->setInputCloud(cloud);
+	n.setInputCloud(cloud);
+	n.setSearchMethod(tree);
+	n.setKSearch(20);
+	n.compute(*normals);
 
-	pcl::PointCloud<pcl::PointNormal> mls_points;
+	pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals(new pcl::PointCloud<pcl::PointNormal>);
+	pcl::concatenateFields(*cloud, *normals, *cloud_with_normals);
 
-	pcl::MovingLeastSquares<pcl::PointXYZRGB, pcl::PointNormal> mls;
+	pcl::search::KdTree<pcl::PointNormal>::Ptr searchtree(new pcl::search::KdTree<pcl::PointNormal>);
+	searchtree->setInputCloud(cloud_with_normals);
 
-	mls.setComputeNormals(true);
+	//ï®ëÃÇÃèâä˙âª
+	pcl::GreedyProjectionTriangulation<pcl::PointNormal> gp3;
+	pcl::PolygonMesh triangles;
 
-	mls.setInputCloud(cloud);
-	mls.setPolynomialFit(true);
-	mls.setSearchMethod(tree);
-	mls.setSearchRadius(0.03);
+	// Set the maximum distance between connected points (maximum edge length)
+	gp3.setSearchRadius(0.025);
 
-	mls.process(mls_points);
+	// Set typical values for the parameters
+	gp3.setMu(2.5);
+	gp3.setMaximumNearestNeighbors(100);
+	gp3.setMaximumSurfaceAngle(M_PI / 4); // 45 degrees
+	gp3.setMinimumAngle(M_PI / 18); // 10 degrees
+	gp3.setMaximumAngle(2 * M_PI / 3); // 120 degrees
+	gp3.setNormalConsistency(false);
 
-	pcl::io::savePLYFileBinary(name + ".ply", mls_points);
+	// Get result
+	gp3.setInputCloud(cloud_with_normals);
+	gp3.setSearchMethod(searchtree);
+	gp3.reconstruct(triangles);
 
 	pcl::visualization::CloudViewer viewer("Cloud Viewer");
 

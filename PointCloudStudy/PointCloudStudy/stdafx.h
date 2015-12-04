@@ -44,6 +44,8 @@ PCL
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/surface/mls.h>
+#include <pcl/features/normal_3d.h>
+#include <pcl/surface/gp3.h>
 
 #include <pcl/point_cloud.h>
 #include <pcl/common/transforms.h>
