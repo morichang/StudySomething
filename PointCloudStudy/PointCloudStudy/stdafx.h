@@ -40,6 +40,7 @@ PCL
 
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
+#include<pcl/io/obj_io.h>
 #include <pcl/point_types.h>
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/kdtree/kdtree_flann.h>
@@ -48,6 +49,8 @@ PCL
 #include <pcl/surface/gp3.h>
 
 #include <pcl/point_cloud.h>
+#include <pcl/PolygonMesh.h>
+#include <pcl/TextureMesh.h>
 #include <pcl/common/transforms.h>
 #include <pcl/registration/icp.h>
 #include <pcl/filters/passthrough.h>
