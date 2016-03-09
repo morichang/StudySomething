@@ -98,7 +98,7 @@ namespace Tercel
 
 			for (int i = 0; i < NUM_VERTEX - 1; ++i)
 				if (!(*p1[i] == *p2[i])) return *p1[i] < *p2[i];
-			return *p1[NUM_VERTEX-1] < *p2[NUM_VERTEX-1];
+			return *p1[NUM_VERTEX - 1] < *p2[NUM_VERTEX - 1];
 		}
 	};
 
@@ -242,7 +242,7 @@ namespace Tercel
 				x[i] = t;
 			}
 
-			for (int i = n - 1; i >= 0; ++i)
+			for (int i = n - 1; i >= 0; --i)
 			{
 				double t = x[i];
 				int ii = ip[i];
@@ -329,7 +329,7 @@ namespace Tercel
 			// 巨大な外部四面体を作る
 			// ======================================
 			Vector p0, p1, p2, p3;
-			Tetrahedron hugeTetrahedron = {&p0, &p1, &p2, &p3};
+			Tetrahedron hugeTetrahedron = { &p0, &p1, &p2, &p3 };
 			//               !! 注意 !!
 			// --------------------------------------
 			// hugeTetrahedronの要素はローカル変数への
@@ -420,13 +420,13 @@ namespace Tercel
 						Tetrahedron t0 = { p, t.p[0], t.p[1], t.p[2] };
 						addElementToRedundanciesMap(&rddcMap, t0);
 
-						Tetrahedron t1 = { p, t.p[0], t.p[1], t.p[2] };
+						Tetrahedron t1 = { p, t.p[0], t.p[2], t.p[3] };
 						addElementToRedundanciesMap(&rddcMap, t1);
 
-						Tetrahedron t2 = { p, t.p[0], t.p[1], t.p[2] };
+						Tetrahedron t2 = { p, t.p[0], t.p[3], t.p[1] };
 						addElementToRedundanciesMap(&rddcMap, t2);
 
-						Tetrahedron t3 = { p, t.p[0], t.p[1], t.p[2] };
+						Tetrahedron t3 = { p, t.p[1], t.p[2], t.p[3] };
 						addElementToRedundanciesMap(&rddcMap, t3);
 
 						tetraSet.erase(tIter++);
@@ -458,13 +458,13 @@ namespace Tercel
 				Triangle t0 = { tetra.p[0], tetra.p[1], tetra.p[2] };
 				triangleSet->insert(t0);
 
-				Triangle t1 = { tetra.p[0], tetra.p[1], tetra.p[2] };
+				Triangle t1 = { tetra.p[0], tetra.p[2], tetra.p[3] };
 				triangleSet->insert(t1);
 
-				Triangle t2 = { tetra.p[0], tetra.p[1], tetra.p[2] };
+				Triangle t2 = { tetra.p[0], tetra.p[3], tetra.p[1] };
 				triangleSet->insert(t2);
 
-				Triangle t3 = { tetra.p[0], tetra.p[1], tetra.p[2] };
+				Triangle t3 = { tetra.p[1], tetra.p[2], tetra.p[3] };
 				triangleSet->insert(t3);
 			}
 		}
