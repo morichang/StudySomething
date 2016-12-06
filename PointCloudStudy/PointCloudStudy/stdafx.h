@@ -44,9 +44,11 @@ PCL
 #include <pcl/point_types.h>
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/kdtree/kdtree_flann.h>
-#include <pcl/surface/mls.h>
 #include <pcl/features/normal_3d.h>
 #include <pcl/surface/gp3.h>
+#include <pcl/surface/mls.h>
+#include <pcl/surface/poisson.h>
+#include <pcl/surface/concave_hull.h>
 
 #include <pcl/point_cloud.h>
 #include <pcl/PolygonMesh.h>
@@ -54,13 +56,14 @@ PCL
 #include <pcl/common/transforms.h>
 #include <pcl/registration/icp.h>
 #include <pcl/filters/passthrough.h>
+#include <pcl/filters/project_inliers.h>
 
-//#include <pcl/ModelCoefficients.h>
-//#include <pcl/sample_consensus/method_types.h>
-//#include <pcl/sample_consensus/model_types.h>
+#include <pcl/ModelCoefficients.h>
+#include <pcl/sample_consensus/method_types.h>
+#include <pcl/sample_consensus/model_types.h>
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/filters/extract_indices.h>
-//#include <pcl/filters/voxel_grid.h>
+#include <pcl/filters/voxel_grid.h>
 
 #ifdef _DEBUG
 #pragma comment(lib, "pcl_common_debug.lib")
