@@ -228,3 +228,8 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+*.png
+*.ply
+*.xml
+*.mlx
+dx_mesh_view/
