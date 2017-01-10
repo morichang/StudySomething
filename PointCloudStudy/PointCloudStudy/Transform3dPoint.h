@@ -5,5 +5,5 @@
 class Transform3dPoint{
 public:
 	Eigen::Matrix4d convMatToEigenMat(cv::Mat m_in);
-	pcl::PointCloud<pcl::PointXYZRGB> convLocalToWorld(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
+	void convLocalToWorld(std::string file_path, pcl::PointCloud<pcl::PointXYZ>::Ptr in_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr out_cloud);
 };

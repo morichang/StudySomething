@@ -29,25 +29,27 @@ void FileConvert::convPLY2PCD(std::string filename, pcl::PointCloud<pcl::PointXY
 }
 
 // DIND‚ÅŽæ“¾‚µ‚½Depth Image‚ðPoint Cloud‚É•ÏŠ·‚·‚é
-void convPNG2PointCloud(std::string filename, cv::Point param_fl, cv::Point param_pp){
-	for (int i = 0; i < 61; i++){
-		cv::Mat depthmap = cv::imread("Data_20161121/dataset_png/depth" + std::to_string(i) + ".png", -1);
-		pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>);
+void FileConvert::convPNG2PointCloud(std::string file_path, cv::Point2d param_fl, cv::Point2d param_pp){
+	cv::Mat depthmap = cv::imread(file_path + "depth.png", -1);
+	pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>);
 
-		for (int v = 0; v < depthmap.rows; v++){
-			for (int u = 0; u < depthmap.cols; u++){
-				pcl::PointXYZ point;
+	for (int v = 0; v < depthmap.rows; v++){
+		for (int u = 0; u < depthmap.cols; u++){
+			pcl::PointXYZ point;
 
-				point.z = depthmap.at<UINT16>(v, u);
-				point.x = (u - param_pp.x) * point.z / param_fl.x;
-				point.y = (v - param_pp.y) * point.z / param_fl.y;
+			point.z = depthmap.at<UINT16>(v, u);
+			point.x = (u - param_pp.x) * point.z / param_fl.x;
+			point.y = (v - param_pp.y) * point.z / param_fl.y;
 
+			if ((point.x != 0.0) && (point.y != 0.0) && (point.z != 0)){
 				pointcloud->push_back(point);
 			}
 		}
-
-		pcl::io::savePLYFile("Data_20161121/dataset_pc/morichang" + std::to_string(i) + ".ply", *pointcloud);
-		pointcloud->clear();
 	}
+
+	pcl::io::savePLYFile(file_path + "pointcloud.ply", *pointcloud);
+	pointcloud->clear();
+	depthmap.release();
+
 	return;
 }
