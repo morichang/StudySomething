@@ -4,7 +4,7 @@
 #include <pcl/filters/radius_outlier_removal.h>
 #include <pcl/filters/conditional_removal.h>
 
-class CloudFillter{
+class CloudFilter{
 public:
-	pcl::PointCloud<pcl::PointXYZRGB> Remove_outliers(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
+	void Remove_outliers(pcl::PointCloud<pcl::PointXYZ>::Ptr in_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr out_cloud);
 };
