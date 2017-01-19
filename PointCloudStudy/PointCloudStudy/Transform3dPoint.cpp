@@ -3,7 +3,7 @@
 Eigen::Matrix4d Transform3dPoint::convMatToEigenMat(cv::Mat m_in){
 	Eigen::Matrix4d R;
 
-	//行列を作成する
+	// 行列を作成する
 	if (m_in.cols == 4) {
 		R << \
 			m_in.at<double>(0, 0), m_in.at<double>(0, 1), m_in.at<double>(0, 2), m_in.at<double>(0, 3), \
@@ -23,7 +23,7 @@ Eigen::Matrix4d Transform3dPoint::convMatToEigenMat(cv::Mat m_in){
 }
 
 void Transform3dPoint::convLocalToWorld(std::string file_path, pcl::PointCloud<pcl::PointXYZ>::Ptr in_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr out_cloud){
-	cv::FileStorage cvfs(file_path + "_extrinsic_calc.xml", CV_STORAGE_READ);  //DIND毎にここのパラメータxmlを変える
+	cv::FileStorage cvfs(file_path + "_extrinsic_calc.xml", CV_STORAGE_READ);
 	cv::FileNode node(cvfs.fs, NULL);
 	/*cv::FileNode fn = node[std::string("param3D_array")];
 
@@ -54,18 +54,27 @@ void Transform3dPoint::convLocalToWorld(std::string file_path, pcl::PointCloud<p
 	if (node["trans"].empty()) std::cout << "trans パースエラー" << std::endl;
 	else cv::read(node["trans"], t);
 
-	;
 	pcl::PointXYZ point;
 	out_cloud->clear();
 	
 	for (auto citr = in_cloud->begin(); citr != in_cloud->end(); citr++) {
 		cv::Mat data = (cv::Mat_<double>(3, 1) << (*citr).x, (*citr).y, (*citr).z);
-		cv::Mat result = (R.inv() * data) - t;
+		cv::Mat result = R.inv() * (data - t);
 		point.x = result.at<double>(0);
 		point.y = result.at<double>(1);
 		point.z = result.at<double>(2);
 		out_cloud->push_back(point);
 	}
 
+	// 点群の座標系がなんか反転してるからZ軸回りに180度回転する
+	cv::Mat rotation_mat = (cv::Mat_<double>(4, 4) <<
+		cos(180 * M_PI / 180), -sin(180 * M_PI / 180), 0.0, 0.0,
+		sin(180 * M_PI / 180), cos(180 * M_PI / 180), 0.0, 0.0,
+		0.0, 0.0, 1.0, 0.0,
+		0.0, 0.0, 0.0, 1.0);
+
+	auto ER = convMatToEigenMat(rotation_mat);
+	pcl::transformPointCloud(*out_cloud, *out_cloud, ER);
+	
 	return ;
 }
