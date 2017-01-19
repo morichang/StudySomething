@@ -10,10 +10,8 @@ inline double HoleFilter::calc_func(double t)
 	if (t > 0.008856) {
 		return std::pow(t, 1 / 3);
 	}
-	else if (t <= 0.008856) {
-		return ((7.787 * t + 16) / 116);
-	}
 	else {
+		return ((7.787 * t + 16.0) / 116.0);
 	}
 }
 
@@ -21,11 +19,14 @@ void HoleFilter::BGR2Lab(cv::Mat &src, cv::Mat &dst, int mat_type)
 {
 	const int H = src.rows;
 	const int W = src.cols;
+	int x, y;
 	double delta;
+	double sR, sG, sB;
 	double L, a, b;
+	cv::Point3d point;
 	cv::Vec3b bgr;
 	cv::Mat param = (cv::Mat_<double>(3, 3) << 0.412453, 0.357580, 0.1804223, 0.212671, 0.715160, 0.072169, 0.019334, 0.119193, 0.950227);
-	cv::Mat labMat(src.size(), CV_64FC3);
+	cv::Mat labMat(src.size(), mat_type);
 
 	if (mat_type == CV_8UC3) {
 		delta = 128.0;
@@ -36,28 +37,49 @@ void HoleFilter::BGR2Lab(cv::Mat &src, cv::Mat &dst, int mat_type)
 
 	// bgr[0] = blue, bgr[1] = green, bgr[2] = red
 	#pragma omp parallel for
-	for (int y = 0; y < H; ++y) {
+	for (y = 0; y < H; ++y) {
 		#pragma omp parallel for
-		for (int x = 0; x < W; ++x) {
-			cv::Point3d point;
+		for (x = 0; x < W; ++x) {
 			bgr = src.at<cv::Vec3b>(y, x);
-			point.x = (bgr[2] * param.at<double>(0, 0)) + (bgr[1] * param.at<double>(0, 1)) + (bgr[0] * param.at<double>(0, 2));
-			point.y = (bgr[2] * param.at<double>(1, 0)) + (bgr[1] * param.at<double>(1, 1)) + (bgr[0] * param.at<double>(1, 2));
-			point.z = (bgr[2] * param.at<double>(2, 0)) + (bgr[1] * param.at<double>(2, 1)) + (bgr[0] * param.at<double>(2, 2));
-			point.x /= 0.950456;
-			point.z /= 1.088754;
-			if (point.y > 0.008856) {
-				L = (116.0 * std::pow(point.y, 1 / 3) - 16.0);
-			}
-			else if (point.y <= 0.008856) {
-				L = (903.3 * point.y);
+			// R, G, Bを[0,1]にスケーリングしガンマ補正をかけることでsRGBにする
+			sR = (double)bgr[2] / 255.0;
+			if (sR < 0.04045) {
+				sR /= 12.92;
 			}
 			else {
-				L = 0.0;
+				sR = std::pow((sR + 0.055) / 1.055, 2.4);
 			}
+			sG = (double)bgr[1] / 255.0;
+			if (sG < 0.04045) {
+				sG /= 12.92;
+			}
+			else {
+				sG = std::pow((sG + 0.055) / 1.055, 2.4);
+			}
+			sB = (double)bgr[0] / 255.0;
+			if (sB < 0.04045) {
+				sB /= 12.92;
+			}
+			else {
+				sB = std::pow((sB + 0.055) / 1.055, 2.4);
+			}
+			
+			point.x = (sR * param.at<double>(0, 0)) + (sG * param.at<double>(0, 1)) + (sB * param.at<double>(0, 2));
+			point.y = (sR * param.at<double>(1, 0)) + (sG * param.at<double>(1, 1)) + (sB * param.at<double>(1, 2));
+			point.z = (sR * param.at<double>(2, 0)) + (sG * param.at<double>(2, 1)) + (sB * param.at<double>(2, 2));
+
+			point.x /= 0.950456;
+			point.z /= 1.088754;
+
+			if (point.y > 0.008856) {
+				L = (116.0 * std::pow(point.y, 1 / 3));
+			}
+			else {
+				L = (903.3 * point.y);
+			}
+			L -= 16.0;
 			a = (500.0 * (calc_func(point.x) - calc_func(point.y)) + delta);
 			b = (200.0 * (calc_func(point.y) - calc_func(point.z)) + delta);
-			//std::cout << L << "," << a << "," << b << std::endl;
 			if (mat_type == CV_8UC3) {
 				labMat.at<cv::Vec3b>(y, x)[0] = (L * 255.0/100.0);
 				labMat.at<cv::Vec3b>(y, x)[1] = (a + 128.0);
