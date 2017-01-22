@@ -20,7 +20,7 @@ void HoleFilter::BGR2Lab(cv::Mat &src, cv::Mat &dst, int mat_type)
 	const int H = src.rows;
 	const int W = src.cols;
 	int x, y;
-	double delta;
+	double delta = 0.0;
 	double sR, sG, sB;
 	double L, a, b;
 	cv::Point3d point;
@@ -31,7 +31,7 @@ void HoleFilter::BGR2Lab(cv::Mat &src, cv::Mat &dst, int mat_type)
 	if (mat_type == CV_8UC3) {
 		delta = 128.0;
 	}
-	else {
+	else if (mat_type == CV_64FC3) {
 		delta = 0.0;
 	}
 
@@ -47,21 +47,21 @@ void HoleFilter::BGR2Lab(cv::Mat &src, cv::Mat &dst, int mat_type)
 				sR /= 12.92;
 			}
 			else {
-				sR = std::pow((sR + 0.055) / 1.055, 2.4);
+				sR = std::pow(((sR + 0.055) / 1.055), 2.4);
 			}
 			sG = (double)bgr[1] / 255.0;
 			if (sG < 0.04045) {
 				sG /= 12.92;
 			}
 			else {
-				sG = std::pow((sG + 0.055) / 1.055, 2.4);
+				sG = std::pow(((sG + 0.055) / 1.055), 2.4);
 			}
 			sB = (double)bgr[0] / 255.0;
 			if (sB < 0.04045) {
 				sB /= 12.92;
 			}
 			else {
-				sB = std::pow((sB + 0.055) / 1.055, 2.4);
+				sB = std::pow(((sB + 0.055) / 1.055), 2.4);
 			}
 			
 			point.x = (sR * param.at<double>(0, 0)) + (sG * param.at<double>(0, 1)) + (sB * param.at<double>(0, 2));
@@ -72,18 +72,17 @@ void HoleFilter::BGR2Lab(cv::Mat &src, cv::Mat &dst, int mat_type)
 			point.z /= 1.088754;
 
 			if (point.y > 0.008856) {
-				L = (116.0 * std::pow(point.y, 1 / 3));
+				L = (116.0 * std::pow(point.y, 1 / 3) - 16.0);
 			}
 			else {
 				L = (903.3 * point.y);
 			}
-			L -= 16.0;
 			a = (500.0 * (calc_func(point.x) - calc_func(point.y)) + delta);
 			b = (200.0 * (calc_func(point.y) - calc_func(point.z)) + delta);
 			if (mat_type == CV_8UC3) {
-				labMat.at<cv::Vec3b>(y, x)[0] = (L * 255.0/100.0);
-				labMat.at<cv::Vec3b>(y, x)[1] = (a + 128.0);
-				labMat.at<cv::Vec3b>(y, x)[2] = (b + 128.0);
+				labMat.at<cv::Vec3b>(y, x)[0] = (L * 255/100);
+				labMat.at<cv::Vec3b>(y, x)[1] = (a + 128);
+				labMat.at<cv::Vec3b>(y, x)[2] = (b + 128);
 			}
 			else if (mat_type == CV_64FC3) {
 				labMat.at<cv::Vec3d>(y, x)[0] = L;
@@ -95,7 +94,7 @@ void HoleFilter::BGR2Lab(cv::Mat &src, cv::Mat &dst, int mat_type)
 	dst = labMat.clone();
 }
 
-void HoleFilter::hole_filter(cv::Mat &src, cv::Mat &dst, cv::Size kernelSize, double sigma_color, double sigma_space)
+void HoleFilter::hole_filter(const cv::Mat &src, const cv::Mat &before, cv::Mat &dst, cv::Size kernelSize, double sigma_color, double sigma_space)
 {
 	const int kernel = kernelSize.area();
 	const int H = src.rows;
@@ -115,7 +114,7 @@ void HoleFilter::hole_filter(cv::Mat &src, cv::Mat &dst, cv::Size kernelSize, do
 		n = 0;
 		d = 0;
 		Lab = src.at<cv::Vec3b>(y, x);
-		if (dst.at<UINT16>(y, x) == 0) {
+		if (before.at<UINT16>(y, x) == 0) {
 			#pragma omp parallel for
 			for (int i = -kernel; i <= kernel; ++i) {
 				#pragma omp parallel for
@@ -125,8 +124,8 @@ void HoleFilter::hole_filter(cv::Mat &src, cv::Mat &dst, cv::Size kernelSize, do
 						P = std::exp(-((i * i + j * j) / (sigma_c)));
 						grad = square(Lab[0] - LabAlpha[0]) + square(Lab[1] - LabAlpha[1]) + square(Lab[2] - LabAlpha[2]);
 						N = std::exp(-(sqrt(grad) / (sigma_s)));
-						if (dst.at<UINT16>(y + i, x + j) != 0) {
-							n += dst.at<UINT16>(y + i, x + j) * (P * N);
+						if (before.at<UINT16>(y + i, x + j) != 0) {
+							n += before.at<UINT16>(y + i, x + j) * (P * N);
 							d += (P * N);
 						}
 					}
@@ -151,7 +150,10 @@ void HoleFilter::hole_filter(cv::Mat &src, cv::Mat &dst, cv::Size kernelSize, do
 
 	auto endtime = boost::posix_time::microsec_clock::local_time();
 
-	std::cout << "ŽžŠÔ:" << (endtime - starttime) << std::endl;
+	std::cout << "DepthMapŒŠ–„‚ßŽžŠÔ: " << (endtime - starttime).hours() << "[h] "
+		<< (endtime - starttime).minutes() << "[m] "
+		<< (endtime - starttime).seconds() << "[s] "
+		<< (endtime - starttime).total_milliseconds() << std::endl;
 }
 
 void HoleFilter::image_truncate(cv::Mat &src_image, cv::Mat &src_depth, cv::Mat &dst_image, cv::Mat &dst_depth)
