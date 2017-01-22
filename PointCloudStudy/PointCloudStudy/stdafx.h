@@ -16,6 +16,8 @@
 
 // TODO: プログラムに必要な追加ヘッダーをここで参照してください。
 #include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/contrib/contrib.hpp>
 
 // バージョン取得
 #define CV_VERSION_STR CVAUX_STR(CV_MAJOR_VERSION) CVAUX_STR(CV_MINOR_VERSION) CVAUX_STR(CV_SUBMINOR_VERSION)
@@ -31,6 +33,7 @@
 #pragma comment(lib, "opencv_highgui"	CV_VERSION_STR CV_EXT_STR)
 #pragma comment(lib, "opencv_imgproc"	CV_VERSION_STR CV_EXT_STR)
 #pragma comment(lib, "opencv_video"		CV_VERSION_STR CV_EXT_STR)
+#pragma comment(lib, "opencv_contrib"   CV_VERSION_STR CV_EXT_STR)
 
 //VCG
 //#include <wrap/io_trimesh/import_off.h>
