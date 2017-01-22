@@ -57,7 +57,7 @@ void Transform3dPoint::convLocalToWorld(std::string file_path, pcl::PointCloud<p
 	pcl::PointXYZ point;
 	out_cloud->clear();
 	
-	for (auto citr = in_cloud->begin(); citr != in_cloud->end(); citr++) {
+	for (auto citr = in_cloud->begin(); citr != in_cloud->end(); ++citr) {
 		cv::Mat data = (cv::Mat_<double>(3, 1) << (*citr).x, (*citr).y, (*citr).z);
 		cv::Mat result = R.inv() * (data - t);
 		point.x = result.at<double>(0);

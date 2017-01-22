@@ -37,6 +37,8 @@ void FileConvert::convPNG2PointCloud(std::string file_path, cv::Point2d param_fl
 	pcl::PointXYZ point;
 	pcl::PLYWriter ply_writer;
 
+	auto starttime = boost::posix_time::microsec_clock::local_time();
+
 	// Depth ImageÇ©ÇÁì_åQÇê∂ê¨
 	for (int v = 0; v < depthmap.rows; ++v){
 		for (int u = 0; u < depthmap.cols; ++u){
@@ -60,6 +62,14 @@ void FileConvert::convPNG2PointCloud(std::string file_path, cv::Point2d param_fl
 	pointcloud->push_back(point);
 
 	ply_writer.write<pcl::PointXYZ>(file_path + "pointcloud.ply", *pointcloud, false, false);
+
+	auto endtime = boost::posix_time::microsec_clock::local_time();
+
+	std::cout << "ì_åQê∂ê¨éûä‘: " << (endtime - starttime).hours() << "[h] "
+		<< (endtime - starttime).minutes() << "[m] "
+		<< (endtime - starttime).seconds() << "[s] "
+		<< (endtime - starttime).total_milliseconds() << std::endl;
+
 	pointcloud->clear();
 	depthmap.release();
 
