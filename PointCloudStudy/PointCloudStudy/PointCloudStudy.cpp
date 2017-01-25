@@ -78,7 +78,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	//cv::imwrite(pc_save_path + "/" + dind_id + "_filterd_trunc_depth.png", filtered_depth);
 	//cv::imwrite(pc_save_path + "/" + dind_id + "_filterd_trunc_depth_color.png", depth_color);
 
-	conv.convPNG2PointCloud(pc_save_path + "/" + dind_id + "_out_", focal_length, principal_point);
+	//conv.convPNG2PointCloud(pc_save_path + "/" + dind_id + "_out_", focal_length, principal_point);
+	conv.convPNG2PointCloudColor(pc_save_path + "/" + dind_id, focal_length, principal_point);
 
 	//Sleep(INFINITE);
 	cv::waitKey();

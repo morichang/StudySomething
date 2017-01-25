@@ -25,27 +25,6 @@ Eigen::Matrix4d Transform3dPoint::convMatToEigenMat(cv::Mat m_in){
 void Transform3dPoint::convLocalToWorld(std::string file_path, pcl::PointCloud<pcl::PointXYZ>::Ptr in_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr out_cloud){
 	cv::FileStorage cvfs(file_path + "_extrinsic_calc.xml", CV_STORAGE_READ);
 	cv::FileNode node(cvfs.fs, NULL);
-	/*cv::FileNode fn = node[std::string("param3D_array")];
-
-	std::vector<cv::Mat>transformationParameter3D;
-
-	for (int i = 0; i < fn.size(); i++) {
-		cv::Mat m;
-		cv::read(fn[i], m);
-		transformationParameter3D.push_back(m);
-	}
-
-	for (auto Rt : transformationParameter3D) {
-		auto ER = convMatToEigenMat(Rt);
-		pcl::transformPointCloud(*in_cloud, *in_cloud, ER);
-	}*/
-
-	//cv::Mat Rt;
-	//if (fn.empty()) std::cout << "param3D_array パースエラー" << std::endl;
-	//else cv::read(fn, Rt);
-
-	//auto ER = convMatToEigenMat(Rt);
-	//pcl::transformPointCloud(*cloud, *cloud, ER);
 
 	cv::Mat R, t;
 	if (node["Rot"].empty()) std::cout << "Rot パースエラー" << std::endl;
@@ -65,6 +44,21 @@ void Transform3dPoint::convLocalToWorld(std::string file_path, pcl::PointCloud<p
 		point.z = result.at<double>(2);
 		out_cloud->push_back(point);
 	}
+
+	/*cv::FileNode fn = node[std::string("param3D_array")];
+
+	std::vector<cv::Mat>transformationParameter3D;
+
+	for (int i = 0; i < fn.size(); i++) {
+	cv::Mat m;
+	cv::read(fn[i], m);
+	transformationParameter3D.push_back(m);
+	}
+
+	for (auto Rt : transformationParameter3D) {
+	auto ER = convMatToEigenMat(Rt);
+	pcl::transformPointCloud(*in_cloud, *in_cloud, ER);
+	}*/
 
 	// 点群の座標系がなんか反転してるからZ軸回りに180度回転する
 	cv::Mat rotation_mat = (cv::Mat_<double>(4, 4) <<

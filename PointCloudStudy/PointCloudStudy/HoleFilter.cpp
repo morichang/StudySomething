@@ -36,9 +36,9 @@ void HoleFilter::BGR2Lab(cv::Mat &src, cv::Mat &dst, int mat_type)
 	}
 
 	// bgr[0] = blue, bgr[1] = green, bgr[2] = red
-	#pragma omp parallel for
+#pragma omp parallel for
 	for (y = 0; y < H; ++y) {
-		#pragma omp parallel for
+#pragma omp parallel for
 		for (x = 0; x < W; ++x) {
 			bgr = src.at<cv::Vec3b>(y, x);
 			// R, G, Bを[0,1]にスケーリングしガンマ補正をかけることでsRGBにする
@@ -63,7 +63,7 @@ void HoleFilter::BGR2Lab(cv::Mat &src, cv::Mat &dst, int mat_type)
 			else {
 				sB = std::pow(((sB + 0.055) / 1.055), 2.4);
 			}
-			
+
 			point.x = (sR * param.at<double>(0, 0)) + (sG * param.at<double>(0, 1)) + (sB * param.at<double>(0, 2));
 			point.y = (sR * param.at<double>(1, 0)) + (sG * param.at<double>(1, 1)) + (sB * param.at<double>(1, 2));
 			point.z = (sR * param.at<double>(2, 0)) + (sG * param.at<double>(2, 1)) + (sB * param.at<double>(2, 2));
@@ -80,7 +80,7 @@ void HoleFilter::BGR2Lab(cv::Mat &src, cv::Mat &dst, int mat_type)
 			a = (500.0 * (calc_func(point.x) - calc_func(point.y)) + delta);
 			b = (200.0 * (calc_func(point.y) - calc_func(point.z)) + delta);
 			if (mat_type == CV_8UC3) {
-				labMat.at<cv::Vec3b>(y, x)[0] = (L * 255/100);
+				labMat.at<cv::Vec3b>(y, x)[0] = (L * 255 / 100);
 				labMat.at<cv::Vec3b>(y, x)[1] = (a + 128);
 				labMat.at<cv::Vec3b>(y, x)[2] = (b + 128);
 			}
@@ -106,8 +106,9 @@ void HoleFilter::hole_filter(const cv::Mat &src, const cv::Mat &before, cv::Mat 
 	double n = 0.0, d = 0.0;
 	double P = 0.0, N = 0.0, grad = 0.0;
 	cv::Vec3b Lab, LabAlpha;
+	UINT16 temp_depth = 0;
 
-	auto starttime = boost::posix_time::microsec_clock::local_time();
+	auto startTime = boost::posix_time::microsec_clock::local_time();
 
 	#pragma omp parallel for
 	for (y = 0; y < H; ++x) {
@@ -119,25 +120,25 @@ void HoleFilter::hole_filter(const cv::Mat &src, const cv::Mat &before, cv::Mat 
 			for (int i = -kernel; i <= kernel; ++i) {
 				#pragma omp parallel for
 				for (int j = -kernel; j <= kernel; ++j) {
-					if (((y + i >= 0) && (y + i < H)) && ((x + j >= 0) && (x + j<W))) {
+					if (((y + i >= 0) && (y + i < H)) && ((x + j >= 0) && (x + j < W))) {
 						LabAlpha = src.at<cv::Vec3b>(y + i, x + j);
 						P = std::exp(-((i * i + j * j) / (sigma_c)));
 						grad = square(Lab[0] - LabAlpha[0]) + square(Lab[1] - LabAlpha[1]) + square(Lab[2] - LabAlpha[2]);
 						N = std::exp(-(sqrt(grad) / (sigma_s)));
 						if (before.at<UINT16>(y + i, x + j) != 0) {
-							n += before.at<UINT16>(y + i, x + j) * (P * N);
-							d += (P * N);
+							temp_depth = before.at<UINT16>(y + i, x + j);
+							n += before.at<UINT16>(y + i, x + j) * (P*N);
+							d += (P*N);
+						}
+						else {
+							n += temp_depth * (P*N);
+							d += (P*N);
 						}
 					}
 					else {
-						LabAlpha = 0;
-						P = std::exp(-((i * i + j * j) / (sigma_c)));
-						grad = square(Lab[0] - LabAlpha[0]) + square(Lab[1] - LabAlpha[1]) + square(Lab[2] - LabAlpha[2]);
-						N = std::exp(-(sqrt(grad) / (sigma_s)));
-						n += 0 * (P * N);
-						d += (P * N);
+						n += 0;
+						d += 0;
 					}
-					
 				}
 			}
 			dst.at<UINT16>(y, x) = static_cast<UINT16>(n / d);
@@ -148,12 +149,12 @@ void HoleFilter::hole_filter(const cv::Mat &src, const cv::Mat &before, cv::Mat 
 		}
 	}
 
-	auto endtime = boost::posix_time::microsec_clock::local_time();
+	auto endTime = boost::posix_time::microsec_clock::local_time();
 
-	std::cout << "DepthMap穴埋め時間: " << (endtime - starttime).hours() << "[h] "
-		<< (endtime - starttime).minutes() << "[m] "
-		<< (endtime - starttime).seconds() << "[s] "
-		<< (endtime - starttime).total_milliseconds() << std::endl;
+	std::cout << "DepthMap穴埋め時間: " << (endTime - startTime).hours() << "[h] "
+		<< (endTime - startTime).minutes() << "[m] "
+		<< (endTime - startTime).seconds() << "[s] "
+		<< (endTime - startTime).total_milliseconds() << std::endl;
 }
 
 void HoleFilter::image_truncate(cv::Mat &src_image, cv::Mat &src_depth, cv::Mat &dst_image, cv::Mat &dst_depth)
@@ -166,7 +167,7 @@ void HoleFilter::image_truncate(cv::Mat &src_image, cv::Mat &src_depth, cv::Mat 
 	else {
 		H = src_image.rows;
 	}
-	
+
 	if (!(src_depth.type() == CV_16UC1) && !(src_image.type() == CV_8UC3)) {
 		std::cerr << "Typeがおかしい" << std::endl;
 	}
