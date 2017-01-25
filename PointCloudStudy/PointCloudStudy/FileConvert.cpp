@@ -30,7 +30,7 @@ void FileConvert::convPLY2PCD(std::string filename, pcl::PointCloud<pcl::PointXY
 	return ;
 }
 
-// DINDで取得したDepth ImageをPoint Cloudに変換する
+// DINDで取得したDepth ImageをPoint CloudXYZに変換する
 void FileConvert::convPNG2PointCloud(std::string file_path, cv::Point2d param_fl, cv::Point2d param_pp){
 	cv::Mat depthmap = cv::imread(file_path + "depth.png", -1);
 	pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>);
@@ -69,6 +69,57 @@ void FileConvert::convPNG2PointCloud(std::string file_path, cv::Point2d param_fl
 		<< (endtime - starttime).minutes() << "[m] "
 		<< (endtime - starttime).seconds() << "[s] "
 		<< (endtime - starttime).total_milliseconds() << std::endl;
+
+	pointcloud->clear();
+	depthmap.release();
+
+	return;
+}
+
+// DINDで取得したDepth ImageをPoint CloudRGBに変換する
+void FileConvert::convPNG2PointCloudColor(std::string file_path, cv::Point2d param_fl, cv::Point2d param_pp){
+	cv::Mat colormap = cv::imread(file_path + "_raw_trunc_color.png", -1);
+	cv::Mat depthmap = cv::imread(file_path + "_out_depth.png", -1);
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+	pcl::PointXYZRGB point;
+	pcl::PLYWriter ply_writer;
+
+	auto startTime = boost::posix_time::microsec_clock::local_time();
+
+	// Depth Imageから点群を生成
+	for (int v = 0; v < depthmap.rows; ++v){
+		for (int u = 0; u < depthmap.cols; ++u){
+			// ミリメートルをメートルに変換
+			point.z = depthmap.at<UINT16>(v, u) / 1000.0;
+			point.x = ((double)u - param_pp.x) * point.z / param_fl.x;
+			point.y = ((double)v - param_pp.y) * point.z / param_fl.y;
+
+			if (point.z != 0.00) {
+				point.r = colormap.at<cv::Vec3b>(v, u)[2];
+				point.g = colormap.at<cv::Vec3b>(v, u)[1];
+				point.b = colormap.at<cv::Vec3b>(v, u)[0];
+				pointcloud->push_back(point);
+			}
+		}
+	}
+
+	// カメラの原点を追加
+	point.x = 0.00;
+	point.y = 0.00;
+	point.z = 0.00;
+	point.r = 255;
+	point.g = 0;
+	point.b = 0;
+	pointcloud->push_back(point);
+
+	ply_writer.write<pcl::PointXYZRGB>(file_path + "pointcloudrgb.ply", *pointcloud, false, false);
+
+	auto endTime = boost::posix_time::microsec_clock::local_time();
+
+	std::cout << "DepthMap穴埋め時間: " << (endTime - startTime).hours() << "[h] "
+		<< (endTime - startTime).minutes() << "[m] "
+		<< (endTime - startTime).seconds() << "[s] "
+		<< (endTime - startTime).total_milliseconds() << std::endl;
 
 	pointcloud->clear();
 	depthmap.release();
