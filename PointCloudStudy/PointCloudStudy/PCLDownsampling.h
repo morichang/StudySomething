@@ -5,11 +5,11 @@ private:
 
 public:
 
-	void exec(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud){
+	void exec(pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud){
 		// Create the filtering object
-		pcl::VoxelGrid<pcl::PointXYZRGB> sor;
+		pcl::VoxelGrid<pcl::PointXYZ> sor;
 		sor.setInputCloud(pointcloud);
-		sor.setLeafSize(0.02f, 0.02f, 0.02f);
+		sor.setLeafSize(0.035f, 0.035f, 0.035f);
 		sor.filter(*pointcloud);
 	}
 };

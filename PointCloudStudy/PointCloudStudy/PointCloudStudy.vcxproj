@@ -93,7 +93,10 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CloudFilter.h" />
+    <ClInclude Include="EditingUtility.h" />
+    <ClInclude Include="FrameMatching.h" />
     <ClInclude Include="HoleFilter.h" />
+    <ClInclude Include="PCLDownsampling.h" />
     <ClInclude Include="Transform3dPoint.h" />
     <ClInclude Include="Delaunay3d.h" />
     <ClInclude Include="FileConvert.h" />
@@ -104,6 +107,8 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CloudFilter.cpp" />
+    <ClCompile Include="EditingUtility.cpp" />
+    <ClCompile Include="FrameMatching.cpp" />
     <ClCompile Include="HoleFilter.cpp" />
     <ClCompile Include="Transform3dPoint.cpp" />
     <ClCompile Include="FileConvert.cpp" />

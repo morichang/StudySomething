@@ -94,7 +94,7 @@ void HoleFilter::BGR2Lab(cv::Mat &src, cv::Mat &dst, int mat_type)
 	dst = labMat.clone();
 }
 
-void HoleFilter::hole_filter(const cv::Mat &src, const cv::Mat &before, cv::Mat &dst, cv::Size kernelSize, double sigma_color, double sigma_space)
+void HoleFilter::holeFilter(const cv::Mat &src, const cv::Mat &before, cv::Mat &dst, cv::Size kernelSize, double sigma_color, double sigma_space)
 {
 	const int kernel = kernelSize.area();
 	const int H = src.rows;
@@ -157,7 +157,7 @@ void HoleFilter::hole_filter(const cv::Mat &src, const cv::Mat &before, cv::Mat 
 		<< (endTime - startTime).total_milliseconds() << std::endl;
 }
 
-void HoleFilter::image_truncate(cv::Mat &src_image, cv::Mat &src_depth, cv::Mat &dst_image, cv::Mat &dst_depth)
+void HoleFilter::imageTruncate(cv::Mat &src_image, cv::Mat &src_depth, cv::Mat &dst_image, cv::Mat &dst_depth)
 {
 	int H;
 
@@ -172,21 +172,21 @@ void HoleFilter::image_truncate(cv::Mat &src_image, cv::Mat &src_depth, cv::Mat 
 		std::cerr << "Type‚ª‚¨‚©‚µ‚¢" << std::endl;
 	}
 	else {
-		dst_image = cv::Mat::zeros(1080, 1440, src_image.type());
-		dst_depth = cv::Mat::zeros(1080, 1440, src_depth.type());
+		dst_image = cv::Mat::zeros(cv::Size(1540, 1080), src_image.type());
+		dst_depth = cv::Mat::zeros(cv::Size(1540, 1080), src_depth.type());
 	}
 
 	for (int y = 0; y < H; ++y) {
-		for (int x = 0; x < 1440; ++x){
-			dst_image.at<cv::Vec3b>(y, x)[0] = src_image.at<cv::Vec3b>(y, x + 240)[0];
-			dst_image.at<cv::Vec3b>(y, x)[1] = src_image.at<cv::Vec3b>(y, x + 240)[1];
-			dst_image.at<cv::Vec3b>(y, x)[2] = src_image.at<cv::Vec3b>(y, x + 240)[2];
+		for (int x = 0; x < 1540; ++x){
+			dst_image.at<cv::Vec3b>(y, x)[0] = src_image.at<cv::Vec3b>(y, x + 190)[0];
+			dst_image.at<cv::Vec3b>(y, x)[1] = src_image.at<cv::Vec3b>(y, x + 190)[1];
+			dst_image.at<cv::Vec3b>(y, x)[2] = src_image.at<cv::Vec3b>(y, x + 190)[2];
 		}
 	}
 
 	for (int y = 0; y < H; ++y) {
-		for (int x = 0; x < 1440; ++x){
-			dst_depth.at<UINT16>(y, x) = src_depth.at<UINT16>(y, x + 240);
+		for (int x = 0; x < 1540; ++x){
+			dst_depth.at<UINT16>(y, x) = src_depth.at<UINT16>(y, x + 190);
 		}
 	}
 }

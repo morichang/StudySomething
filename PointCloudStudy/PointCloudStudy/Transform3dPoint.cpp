@@ -1,6 +1,7 @@
 #include "Transform3dPoint.h"
 
-Eigen::Matrix4d Transform3dPoint::convMatToEigenMat(cv::Mat m_in){
+Eigen::Matrix4d Transform3dPoint::convMatToEigenMat(cv::Mat m_in)
+{
 	Eigen::Matrix4d R;
 
 	// çsóÒÇçÏê¨Ç∑ÇÈ
@@ -22,7 +23,8 @@ Eigen::Matrix4d Transform3dPoint::convMatToEigenMat(cv::Mat m_in){
 	return R;
 }
 
-void Transform3dPoint::convLocalToWorld(std::string file_path, pcl::PointCloud<pcl::PointXYZ>::Ptr in_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr out_cloud){
+void Transform3dPoint::convLocalToWorld(std::string file_path, pcl::PointCloud<pcl::PointXYZ>::Ptr &in_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &out_cloud)
+{
 	cv::FileStorage cvfs(file_path + "_extrinsic_calc.xml", CV_STORAGE_READ);
 	cv::FileNode node(cvfs.fs, NULL);
 
@@ -35,8 +37,9 @@ void Transform3dPoint::convLocalToWorld(std::string file_path, pcl::PointCloud<p
 
 	pcl::PointXYZ point;
 	out_cloud->clear();
+	pcl::PointCloud<pcl::PointXYZ>::iterator citr = in_cloud->begin();
 	
-	for (auto citr = in_cloud->begin(); citr != in_cloud->end(); ++citr) {
+	for (auto citr_end = in_cloud->end(); citr != citr_end; ++citr) {
 		cv::Mat data = (cv::Mat_<double>(3, 1) << (*citr).x, (*citr).y, (*citr).z);
 		cv::Mat result = R.inv() * (data - t);
 		point.x = result.at<double>(0);

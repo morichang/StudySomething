@@ -13,6 +13,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <future>  // using std::thread
 
 // TODO: プログラムに必要な追加ヘッダーをここで参照してください。
 #include <opencv2/opencv.hpp>
@@ -50,6 +51,8 @@ PCL
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/io/obj_io.h>
+#include <pcl/io/vtk_lib_io.h>
+#include <pcl/io/impl/vtk_lib_io.hpp>
 #include <pcl/point_types.h>
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/kdtree/kdtree_flann.h>
@@ -58,9 +61,15 @@ PCL
 #include <pcl/surface/gp3.h>
 #include <pcl/surface/mls.h>
 #include <pcl/surface/poisson.h>
+#include <pcl/surface/grid_projection.h>
 #include <pcl/surface/reconstruction.h>
 #include <pcl/surface/organized_fast_mesh.h>
 #include <pcl/surface/marching_cubes_rbf.h>
+#include <pcl/surface/concave_hull.h>
+#include <pcl/surface/processing.h>
+#include <pcl/surface/on_nurbs/fitting_surface_tdm.h>
+#include <pcl/surface/on_nurbs/fitting_curve_2d_asdm.h>
+#include <pcl/surface/on_nurbs/triangulation.h>
 
 #include <pcl/point_cloud.h>
 #include <pcl/common/transforms.h>
@@ -74,6 +83,7 @@ PCL
 #include <pcl/segmentation/supervoxel_clustering.h>
 #include <pcl/segmentation/extract_clusters.h>
 #include <pcl/filters/extract_indices.h>
+#include <pcl/filters/project_inliers.h>
 #include <pcl/filters/voxel_grid.h>
 
 #ifdef _DEBUG
