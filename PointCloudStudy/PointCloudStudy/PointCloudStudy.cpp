@@ -12,7 +12,7 @@ void keyboardEventOccurred(const pcl::visualization::KeyboardEvent &event, 	void
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer = *static_cast<boost::shared_ptr<pcl::visualization::PCLVisualizer> *> (viewer_void);
 	if (event.getKeySym() == "g" && event.keyDown())
 	{
-		//現在のViewがほしい
+		auto Pos = viewer->getViewerPose();//現在のViewがほしい
 	}
 	if (event.getKeySym() == "r" && event.keyDown())
 	{
@@ -33,26 +33,27 @@ void keyboardEventOccurred(const pcl::visualization::KeyboardEvent &event, 	void
 int _tmain(int argc, _TCHAR* argv[])
 {
 	char key = 0;
-	int i = 1;
+	int i = 2;
 
-	std::string name = "Data_20161121/dataset_obj/obj_frame";
+	std::string name = "C:/Users/Morita/Desktop/marge/Mesh/Frame__";
 
 	cv::imshow("Key Capture", NULL);
 
 	pcl::PolygonMesh::Ptr polygonMesh(new pcl::PolygonMesh());
+	pcl::io::loadPLYFile(name + "40-maregemesh.ply", *polygonMesh);
 
 	pcl::visualization::PCLVisualizer view("MeshMovie");
 
-	view.initCameraParameters();
+	//view.initCameraParameters();
 	view.setBackgroundColor(0, 0, 0);
-	view.setCameraPosition(-1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0);
-	pcl::io::loadPLYFile(name + std::to_string(i) + ".ply", *polygonMesh);
+	view.setCameraPosition(0.0, 2.0, 0.0, 1.0, 1.0, 1.0, 0);
+	view.addPolygonMesh(*polygonMesh, "polygon");
 
 	while (true){
-		view.addPolygonMesh(*polygonMesh, name + std::to_string(i));
+		//pcl::io::loadPLYFile(name + std::to_string(i) + "-maregemesh.ply", *polygonMesh);
+		//view.addPolygonMesh(*polygonMesh, name + std::to_string(i));
 		view.spin();
-		key = cv::waitKey(1); //ウィンドウの更新
-
+		
 		if (key == 'q'){
 			exit(1);
 		}
@@ -60,15 +61,15 @@ int _tmain(int argc, _TCHAR* argv[])
 			++i;
 			polygonMesh->polygons.clear();
 			view.removePolygonMesh(name + std::to_string(i));
-			pcl::io::loadPLYFile(name + std::to_string(i) + ".ply", *polygonMesh);
 		}
 		++i;
-		polygonMesh->polygons.clear();
-		view.removePolygonMesh(name + std::to_string(i));
-		pcl::io::loadPLYFile(name + std::to_string(i) + ".ply", *polygonMesh);
-		if (i <= 60){
+		//polygonMesh->polygons.clear();
+		//view.removePolygonMesh(name + std::to_string(i));
+
+		if (i <= 10){
 			i = 1;
 		}
+		key = cv::waitKey(33); //ウィンドウの更新
 	}
 	
 	view.~PCLVisualizer();
